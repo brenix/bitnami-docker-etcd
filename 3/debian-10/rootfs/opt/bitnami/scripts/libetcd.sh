@@ -278,8 +278,8 @@ etcd_initialize() {
                 ensure_dir_exists "$ETCD_DATA_DIR"
                 read -r -a extra_flags <<< "$(etcdctl_auth_flags)"
                 extra_flags+=("--endpoints=$(etcdctl_get_endpoints)" "--peer-urls=$ETCD_INITIAL_ADVERTISE_PEER_URLS")
-                (unset -v ETCDCTL_ENDPOINTS; etcdctl member add "$ETCD_NAME" "${extra_flags[@]}" | grep "^ETCD_" > "${ETCD_DATA_DIR}/new_member_envs")
-                replace_in_file "${ETCD_DATA_DIR}/new_member_envs" "^" "export "
+                (unset -v ETCDCTL_ENDPOINTS; etcdctl member add "$ETCD_NAME" "${extra_flags[@]}" | grep "^ETCD_" > "$ETCD_NEW_MEMBERS_ENV_FILE")
+                replace_in_file "$ETCD_NEW_MEMBERS_ENV_FILE" "^" "export "
             fi
         fi
         if is_boolean_yes "$ETCD_START_FROM_SNAPSHOT"; then
@@ -343,8 +343,8 @@ etcd_initialize() {
                 info "Adding new member to existing cluster"
                 read -r -a extra_flags <<< "$(etcdctl_auth_flags)"
                 extra_flags+=("--endpoints=$(etcdctl_get_endpoints)" "--peer-urls=$ETCD_INITIAL_ADVERTISE_PEER_URLS")
-                (unset -v ETCDCTL_ENDPOINTS; etcdctl member add "$ETCD_NAME" "${extra_flags[@]}" | grep "^ETCD_" > "${ETCD_DATA_DIR}/new_member_envs")
-                replace_in_file "${ETCD_DATA_DIR}/new_member_envs" "^" "export "
+                (unset -v ETCDCTL_ENDPOINTS; etcdctl member add "$ETCD_NAME" "${extra_flags[@]}" | grep "^ETCD_" > "$ETCD_NEW_MEMBERS_ENV_FILE")
+                replace_in_file "$ETCD_NEW_MEMBERS_ENV_FILE" "^" "export "
                 debug_execute etcd_store_member_id &
             else
                 info "Updating member in existing cluster"

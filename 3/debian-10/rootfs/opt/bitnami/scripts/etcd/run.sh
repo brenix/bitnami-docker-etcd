@@ -22,9 +22,9 @@ declare -a args=("$@")
 
 ! is_empty_value "$ETCD_ROOT_PASSWORD" && unset ETCD_ROOT_PASSWORD
 
-if [[ -f "${ETCD_DATA_DIR}/new_member_envs" ]]; then
+if [[ -f "$ETCD_NEW_MEMBERS_ENV_FILE" ]]; then
     debug "Loading env vars of existing cluster"
-    . "${ETCD_DATA_DIR}/new_member_envs"
+    . "$ETCD_NEW_MEMBERS_ENV_FILE"
 fi
 
 info "** Starting etcd **"
